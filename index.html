@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>探寻RGB颜色动画变化</title>
+	<style type="text/css">
+		body {
+			width: 100%;
+			height: 100%;
+		}
+		.move {
+			width: 50px;
+			height: 50px;
+			border-radius:50%;
+		}
+		#box {
+			top: 50%;
+			position: absolute;
+			transform: translateY(-50%);
+			display: flex;
+			justify-content: space-around;
+			height:100%;
+			flex-wrap: wrap;
+		}
+	</style>
+</head>
+<body>
+	<div id="box">
+	</div>
+	
+	<script type="text/javascript">
+		window.onload = function(){
+			var MAX_COMBOX = 6;
+			var during = 8000;
+			var box = document.getElementById('box');
+			for(var i = 0;i < Math.pow(MAX_COMBOX,3);i++){
+				var elem = document.createElement('div');
+				elem.id = 'move'+ i;
+				elem.className = 'move';
+				box.appendChild(elem);
+				paintBox(elem,i);
+			}
+
+			function paintBox(elem, i) {
+				var start = +new Date();
+				requestAnimationFrame(function f(){
+					var p = (+new Date() - start) / during;
+					if(p < 1){
+ 						var temp  = rtnCalcFuncVal(i).map(v => returnValue(v,p));
+						var red   = 0 | temp[0],
+								green = 0 | temp[1],
+								blue  = 0 | temp[2];
+						elem.style.backgroundColor = "rgb("+[red, green, blue]+")";
+						requestAnimationFrame(f);
+					} else {
+						// elem.style.backgroundColor = "rgb(0, 0, 0)";
+					}
+				});
+			}
+
+			function rtnCalcFuncVal(i) {
+				var tempR, tempG, tempB;
+				tempR = 0 | Math.floor(i / Math.pow(MAX_COMBOX, 2));
+				tempG = 0 | Math.floor(i % Math.pow(MAX_COMBOX, 2) / MAX_COMBOX);
+				tempB = 0 | i % MAX_COMBOX;
+				return [tempR, tempG, tempB];
+			}
+
+			function returnValue(i, p) {
+				switch(i) {
+					case 0 :
+						return 255 * p;
+						break;
+					case 1:
+						return 255 * (1 - p);
+						break;
+					case 2:
+						return 255 * Math.sin(p * Math.PI);
+						break;
+					case 3:
+						return 255 * Math.sin((1 - p) * Math.PI);
+						break;
+					case 4:
+						return 255 * Math.cos(p * Math.PI);
+						break;
+					case 5:
+						return 255 * Math.cos((1 - p) * Math.PI);
+				}
+			}
+		};
+	</script>
+</body>
+</html>
